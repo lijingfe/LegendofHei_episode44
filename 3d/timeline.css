@@ -1,0 +1,49 @@
+.timeline { color: #c4d7e6; font-size: .8125rem; }
+.timeline-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.timeline button, .timeline select, .camera-tools button {
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #c4d7e6;
+  background: transparent;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.timeline select { appearance: auto; font-family: var(--mono); }
+.timeline select option { background: #0a1523; }
+.timeline button:hover, .timeline select:hover, .camera-tools button:hover { background: #18374c; }
+.timeline button:focus-visible, .timeline select:focus-visible, .timeline input:focus-visible, .camera-tools button:focus-visible {
+  outline: 2px solid #79dff7;
+  outline-offset: 1px;
+}
+.timeline-controls .timeline-play { background: #103246; color: #b9f3ff; border-color: #245069; }
+#step-back, #step-forward { font: inherit; font-family: var(--mono); }
+.timeline-time {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+  padding-left: 8px;
+  border-left: 1px solid #244058;
+  color: #79dff7;
+  font: .8125rem var(--mono);
+}
+.timeline-time input {
+  width: 5ch;
+  padding: 4px 0;
+  appearance: textfield;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #e4f8ff;
+  font: inherit;
+  text-align: right;
+}
+.timeline-time input::-webkit-inner-spin-button, .timeline-time input::-webkit-outer-spin-button { appearance: none; }
+.timeline-range { display: flex; align-items: center; gap: 8px; padding: 0 5px; color: #9bb6c9; font: .6875rem var(--mono); }
+.timeline-range input { flex: 1; min-width: 0; min-height: 22px; margin: 0; cursor: pointer; accent-color: #79dff7; }
+.lens { display: inline-flex; align-items: center; justify-self: start; gap: 6px; padding: 0 8px; color: #a9c4d8; font-size: .75rem; white-space: nowrap; }
+.lens select { min-height: 25px; padding: 0 4px; border: 1px solid #244058; border-radius: 5px; background: #0a1523; color: #b9f3ff; font: .75rem var(--mono); cursor: pointer; }
+.lens select:focus-visible { outline: 2px solid #79dff7; outline-offset: 1px; }

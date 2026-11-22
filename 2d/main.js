@@ -1,0 +1,16 @@
+import { createTimeline } from '../3d/timeline.js';
+import { mountWaveView } from './app.js';
+import { field, sectionCenter, sources } from './wave-model.js';
+
+document.querySelector('#wave-speed').textContent = `${sources[0].speed} m/s`;
+document.querySelector('#wave-interval').textContent = `${sources[0].interval} s`;
+
+const timeline = createTimeline(document.querySelector('#timeline'), { autoplay: false });
+const view = mountWaveView({ field, sectionCenter, sources });
+
+function frame(now) {
+  view.render(timeline.tick(now));
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);

@@ -1,0 +1,11 @@
+# OS & editor files
+.DS_Store
+Thumbs.db
+
+# Large video, frame resources & explainer video project (excluded from public repo)
+*.mp4
+calculate_source_positions_resources/
+explainer_video/
+
+# Optional local dependencies
+node_modules/

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a14">
+  <meta name="description" content="《罗小黑战记》第 44 集球面波的三维传播、二维切面与避障寻径交互演示。">
+  <link rel="icon" href="data:,">
+  <title>Episode 44 · 球面波仿真</title>
+  <style>
+    :root { color-scheme: dark; background: #050a14; color: #e4f3fd; font: 16px/1.55 system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: clamp(28px, 8vw, 104px) 20px 40px; }
+    main { max-width: 770px; margin: auto; }
+    header { margin-bottom: 26px; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.7rem); letter-spacing: .02em; }
+    p { margin: 6px 0 0; color: #a5bcd0; }
+    nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 12px; }
+    nav a { display: block; padding: 16px 18px; border: 1px solid #244058; border-radius: 9px; background: #071120; color: #e4f3fd; text-decoration: none; }
+    nav a:hover, nav a:focus-visible { border-color: #79dff7; background: #0a192a; }
+    nav strong { display: block; color: #79dff7; }
+    nav span { display: block; margin-top: 3px; font-size: .9rem; color: #afc5d8; }
+    footer { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 24px; font-size: .9rem; }
+    footer a { color: #a5bcd0; text-underline-offset: 3px; }
+    a:focus-visible { outline: 2px solid #79dff7; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Episode 44 · 球面波仿真</h1>
+      <p>《罗小黑战记》第 44 集的球面波、平面交圆与避障寻径。</p>
+    </header>
+    <nav aria-label="交互演示">
+      <a href="./3d还原动画/"><strong>3D 动画还原</strong><span>蓝色经纬网、相贯切线与参考机位</span></a>
+      <a href="./3d/"><strong>五色 3D 球面波</strong><span>观察五个波源的传播与平面切面</span></a>
+      <a href="./2d/"><strong>2D 波场切面</strong><span>交圆时间轴、距离探针与碰撞提示</span></a>
+      <a href="./2d_final/"><strong>2D 避障寻径</strong><span>计算并回放穿过移动波线的安全路径</span></a>
+    </nav>
+    <footer>
+      <a href="https://github.com/lijingfe/LegendofHei_episode44">GitHub 源码</a>
+      <a href="https://github.com/lijingfe/LegendofHei_episode44/blob/main/波源三维高度反推原理与计算过程.md">波源高度反推原理</a>
+    </footer>
+  </main>
+</body>
+</html>

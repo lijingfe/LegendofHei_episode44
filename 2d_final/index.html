@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a14">
+  <title>探测波避障瞬移寻径</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="heading">
+      <span class="wave-mark" aria-hidden="true"></span>
+      <div>
+        <h1>探测波避障瞬移寻径</h1>
+        <p>在扩张的探测波之间规划开洞、瞬移与留守时机</p>
+      </div>
+    </div>
+    <div class="field-spec"><span>z = 0 m</span><span>波速 10 m/s</span><span>发射间隔 10 s</span></div>
+  </header>
+
+  <main class="workspace">
+    <section class="panel observatory" aria-labelledby="map-heading">
+      <div class="map-header">
+        <div>
+          <h2 id="map-heading">波场回放</h2>
+          <p>拖动平移 · 滚轮缩放</p>
+        </div>
+        <div class="map-actions">
+          <button type="button" id="focus">聚焦路径</button>
+          <button type="button" id="view-reset">重置视角</button>
+        </div>
+      </div>
+      <div class="chart">
+        <canvas id="field" aria-label="探测波、目标区域、瞬移路线与各洞生命周期"></canvas>
+        <div class="map-status" id="map-status"><i></i><span>正在载入</span></div>
+        <div class="scale"><span id="scale-length"></span><i id="scale-bar"></i></div>
+      </div>
+      <div class="legend" aria-label="图例">
+        <span><i class="key goal"></i>目标区域 (r ≤ 50m)</span>
+        <span><i class="key route"></i>规划路线</span>
+        <span><i class="key current"></i>人物所在洞</span>
+        <span><i class="key fading"></i>消失倒计时</span>
+        <span><i class="key pending"></i>新洞待抵达</span>
+      </div>
+      <div class="timeline">
+        <div class="time-toolbar">
+          <button type="button" id="play"><span aria-hidden="true">▶</span> 播放</button>
+          <button type="button" id="restart">回到起点</button>
+          <label class="speed-label">倍速
+            <select id="speed">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+          <output id="clock" for="time">0.00 / 0.00 s</output>
+        </div>
+        <input id="time" type="range" min="0" max="0" step="any" value="0" aria-label="回放时刻">
+      </div>
+    </section>
+
+    <aside class="sidebar" aria-label="路径规划与跳跃步骤">
+      <section class="panel planner" aria-labelledby="plan-heading">
+        <h2 id="plan-heading">路径规划</h2>
+        <form id="planner">
+          <div class="fields">
+            <label for="start">起点 x
+              <span class="number"><input id="start" type="number" step="any" value="350" required><span>m</span></span>
+            </label>
+            <label for="margin">安全裕度
+              <span class="number"><input id="margin" type="number" min="0" step="any" value="0.3" required><span>m</span></span>
+            </label>
+          </div>
+          <button type="submit" id="solve">重新规划路径</button>
+        </form>
+        <p id="solution" class="solution" role="status">正在求解</p>
+        <dl class="metrics">
+          <div><dt>总用时（含留守）</dt><dd id="duration">—</dd></div>
+          <div><dt>跳跃次数</dt><dd id="jumps">—</dd></div>
+          <div><dt>最小安全距离</dt><dd id="clearance">—</dd></div>
+          <div><dt>计算用时</dt><dd id="runtime">—</dd></div>
+        </dl>
+      </section>
+      <section class="panel jump-panel" aria-labelledby="jump-heading">
+        <div class="jump-header">
+          <div>
+            <h2 id="jump-heading">跳跃步骤</h2>
+            <p>点击一跳，定格在开洞时刻</p>
+          </div>
+        </div>
+        <ol id="steps" aria-label="跳跃步骤"></ol>
+      </section>
+      <label class="panel comparison"><input type="checkbox" id="compare"> 原地等待对照</label>
+    </aside>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a14">
+  <title>球面波切面</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../3d/timeline.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="heading">
+      <span class="wave-mark" aria-hidden="true"></span>
+      <h1>球面波切面</h1>
+      <span class="plane">z = 0</span>
+    </div>
+    <dl class="parameters" aria-label="模拟参数">
+      <div><dt>波速</dt><dd id="wave-speed"></dd></div>
+      <div><dt>发射间隔</dt><dd id="wave-interval"></dd></div>
+    </dl>
+  </header>
+  <main>
+    <section class="toolbar" aria-label="模拟控制">
+      <div id="timeline"></div>
+      <div class="view-tools">
+        <div class="modes" role="group" aria-label="绘制样式">
+          <button type="button" data-mode="teaching" aria-pressed="true">五色教学</button>
+          <button type="button" data-mode="animation" aria-pressed="false">动画蓝底</button>
+        </div>
+        <button id="view-reset" type="button">重置视角</button>
+      </div>
+    </section>
+    <section class="observatory" aria-label="二维波场">
+      <div class="chart">
+        <canvas id="field" aria-label="球面波与 z = 0 平面的交圆，X 轴向右，Y 轴向上"></canvas>
+        <div class="scale" aria-label="距离比例尺">
+          <span id="scale-length"></span><i id="scale-bar" aria-hidden="true"></i>
+        </div>
+        <div class="probe" id="probe">
+          <div class="probe-heading"><strong>陷阱探针</strong><span id="probe-state" role="status">指向画布</span></div>
+          <dl>
+            <div><dt>坐标 (m)</dt><dd id="probe-point">—</dd></div>
+            <div><dt>最近波线</dt><dd id="probe-distance">—</dd></div>
+          </dl>
+        </div>
+      </div>
+      <aside class="source-panel" aria-labelledby="sources-heading">
+        <h2 id="sources-heading">波源</h2>
+        <div id="sources"></div>
+        <p>探针检测全部波源</p>
+      </aside>
+    </section>
+    <noscript><p>请启用 JavaScript 以运行模拟。</p></noscript>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
