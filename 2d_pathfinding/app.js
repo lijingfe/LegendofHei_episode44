@@ -264,7 +264,7 @@ function mount() {
         return;
       }
     }
-    const highlighted = new Set([route[0], route.at(-1), ...route.slice(Math.max(0, latest - 2), latest + 1)]);
+    const highlighted = new Set([route[0], route.at(-1), ...route.slice(Math.max(0, latest - 3), latest + 1)]);
     highlighted.forEach(mark);
     for (const hole of route) {
       const x = screenX(hole.x);
@@ -313,7 +313,7 @@ function mount() {
     const shade = condition === 'old' ? colors.old : condition === 'new' ? colors.new : colors.route;
     const color = hit ? colors.hit : shade;
     ctx.save();
-    if (!hit && condition === 'old') ctx.globalAlpha = 0.2 + 0.8 * remaining;
+    if (!hit && condition === 'old') ctx.globalAlpha = 0.2 + 0.8 * Math.min(1, Math.max(0, remaining));
     if (!hit && condition === 'new') ctx.globalAlpha = 0.65 + 0.35 * Math.cos((time - hole.tOpen) * tau * 5);
     ctx.strokeStyle = color;
     ctx.fillStyle = color;

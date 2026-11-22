@@ -6,25 +6,26 @@ const field = createWaveField();
 const source = (x, options = {}) => ({ id: 1, x, y: 0, z: 0, speed: 10, interval: 10, startTime: 0, ...options });
 const straight = (...points) => points.map((x, index) => ({
   index, x, y: 0, tOpen: index === 0 ? 0 : (index - 1) * 0.5,
-  tArrive: index * 0.5, tExpire: index === points.length - 1 ? null : index * 0.5 + 1,
+  tArrive: index * 0.5, tExpire: index === points.length - 1 ? null : (index + 1) * 0.5 + 1,
 }));
 
-const grazing = createWaveField({ sources: [source(89)] });
-assert.equal(isHoleSafeDuring(100, 0, 0, 1, grazing).safe, false);
+const grazing = createWaveField({ sources: [source(84)] });
+assert.equal(isHoleSafeDuring(100, 0, 0, 1.5, grazing).safe, false);
 assert.equal(validatePath(straight(100, 50), grazing).valid, true, '旧洞消失时刻不参与碰撞');
-assert.equal(isHoleSafeDuring(100, 0, 0, 0.99, grazing).safe, true);
-assert.equal(isHoleSafeDuring(100, 0, 0, 0.99, grazing, 1, 0.2).safe, false);
-assert.equal(isHoleSafeDuring(100, 0, 0, 2, createWaveField({ sources: [source(89)], maxRadius: 9 })).safe, true);
+assert.equal(isHoleSafeDuring(100, 0, 0, 1.49, grazing).safe, true);
+assert.equal(isHoleSafeDuring(100, 0, 0, 1.49, grazing, 1, 0.2).safe, false);
+assert.equal(isHoleSafeDuring(100, 0, 0, 2, createWaveField({ sources: [source(84)], maxRadius: 14 })).safe, true);
 
 const flash = createWaveField({ sources: [source(100, { z: -3, speed: 20, startTime: 0.011 })], maxRadius: 3.001 });
 assert.equal(isHoleSafeDuring(100, 0, 0.15, 0.17, flash).safe, false, '包含半径为零的触地瞬间');
 assert.equal(isHoleSafeDuring(100, 0, 0.15, 0.17, flash).margin, -1);
 assert.match(validatePath(straight(100, 50), flash).reason, /连续区间/, '捕获落在时间采样之间的整段波环');
 
-const overlap = createWaveField({ sources: [source(150, { startTime: 0.75 })] });
-const overlapResult = validatePath(straight(150, 100, 50), overlap);
+const overlap = createWaveField({ sources: [source(200, { startTime: 1.25 })] });
+const overlapResult = validatePath(straight(200, 150, 100, 50), overlap);
 assert.equal(overlapResult.valid, false);
-assert.equal(overlapResult.index, 0, '第三个洞开启后仍要检查第一个洞');
+assert.equal(overlapResult.index, 0, '第四个洞开启后仍要检查第一个洞');
+assert.equal(overlapResult.time, 1.26, '旧洞在额外的 0.5 s 内仍会被探测');
 
 const finalContact = createWaveField({ sources: [source(34)] });
 assert.equal(validatePath(straight(100, 50), finalContact).valid, false, '终点最后一刻仍可被探测');

@@ -125,7 +125,7 @@ export function findSafePath({
     for (let next = null; node; next = node, node = node.parent) {
       steps.push({
         index: node.index, x: node.x, y: node.y, tOpen: node.open, tArrive: node.arrive,
-        tExpire: next ? next.open + oldLifetime : null,
+        tExpire: next ? next.arrive + oldLifetime : null,
         waitTime: node.parent ? node.open - node.parent.arrive : 0,
         stepDist: node.parent ? Math.hypot(node.x - node.parent.x, node.y - node.parent.y) : 0,
         minMargin: next ? next.previousMargin : terminalMargin,
@@ -184,8 +184,8 @@ export function findSafePath({
     if (nextX >= seed.x) break;
     const point = { x: nextX, y: 0 };
     const open = seed.arrive;
-    const previous = inspect(seed, seed.open, open + oldLifetime, false);
-    const upcoming = inspect(point, open, open + travelTime + oldLifetime, false);
+    const previous = inspect(seed, seed.open, open + travelTime + oldLifetime, false);
+    const upcoming = inspect(point, open, open + 2 * travelTime + oldLifetime, false);
     // The older holes' entire lifetimes were certified when they were superseded.
     if (!previous.safe || !upcoming.safe || Math.min(previous.margin, upcoming.margin) <= Math.max(50, safetyMargin)) break;
     seed = advance(seed, point, open, previous, upcoming);
@@ -228,7 +228,7 @@ export function findSafePath({
     // Once a wave reaches the occupied hole, all later departure times are invalid.
     const departures = new Map();
     function departure(open) {
-      if (!departures.has(open)) departures.set(open, inspect(node, node.open, open + oldLifetime, false));
+      if (!departures.has(open)) departures.set(open, inspect(node, node.open, open + travelTime + oldLifetime, false));
       return departures.get(open);
     }
     if (!departure(node.arrive).safe) continue;
@@ -257,7 +257,7 @@ export function findSafePath({
         }
         if (stepDist === 0 || stepDist > maxStep) continue;
         const goal = Math.hypot(point.x, point.y) <= goalRadius;
-        const life = travelTime + (goal ? goalHold : oldLifetime);
+        const life = travelTime + (goal ? goalHold : travelTime + oldLifetime);
         const lastOpen = Math.min(latest, deadline - travelTime - goalHold - heuristic(point.x, point.y));
         let windowFound = false;
         for (const wait of waits) {
@@ -308,7 +308,7 @@ export function validatePath(steps, waveField = field, {
     const previous = steps[index - 1];
     const next = steps[index + 1];
     if (![hole.x, hole.y, hole.tOpen, hole.tArrive].every(Number.isFinite) || hole.index !== index
-        || hole.tExpire !== (next ? next.tOpen + oldLifetime : null)
+        || hole.tExpire !== (next ? next.tArrive + oldLifetime : null)
         || (previous && (hole.tOpen < previous.tArrive || hole.tArrive !== hole.tOpen + travelTime
           || Math.hypot(hole.x - previous.x, hole.y - previous.y) > maxStep))) {
       return fail('开洞、抵达、消失或步长不符合规则', index, hole.tOpen);
