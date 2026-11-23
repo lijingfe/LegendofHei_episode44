@@ -45,8 +45,10 @@ export function mountWaveView({ field, sectionCenter, sources }) {
     const row = document.createElement('label');
     row.className = 'source';
     row.style.setProperty('--source-color', source.colors.section);
-    row.innerHTML = '<input type="checkbox" checked><span></span>';
-    row.querySelector('span').textContent = `${source.label} ${sourceCoordinates(source)}`;
+    row.innerHTML = '<input type="checkbox" checked><span class="source-details"><span></span><span></span></span>';
+    const [values, emission] = row.querySelector('.source-details').children;
+    values.textContent = `${source.label} ${sourceCoordinates(source)}`;
+    emission.textContent = `t=${source.startTime.toFixed(2)} s`;
     row.querySelector('input').addEventListener('change', ({ target }) => {
       if (target.checked) visible.add(source.id);
       else visible.delete(source.id);

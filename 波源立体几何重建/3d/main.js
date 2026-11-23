@@ -382,14 +382,18 @@ document.querySelector('#section-span').textContent = sectionExtent * 2;
 document.querySelector('#scale-label').textContent = `${CONFIG.scaleLength} m`;
 const legend = document.querySelector('#section-legend');
 const coordinates = document.querySelector('#source-coordinates');
-for (const { label, colors, x, y, z } of sources) {
+for (const { label, colors, x, y, z, startTime } of sources) {
   const item = document.createElement('li');
   item.style.setProperty('--source-color', colors.section);
   item.textContent = label;
   legend.append(item);
 
   const coordinate = item.cloneNode();
-  coordinate.textContent = `${label} (${x}, ${y}, ${z})`;
+  const values = document.createElement('span');
+  values.textContent = `${label} (${x}, ${y}, ${z})`;
+  const emission = document.createElement('span');
+  emission.textContent = `t=${startTime.toFixed(2)} s`;
+  coordinate.append(values, emission);
   coordinates.append(coordinate);
 }
 

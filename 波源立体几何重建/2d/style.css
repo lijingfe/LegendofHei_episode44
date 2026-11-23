@@ -59,13 +59,14 @@ h1 { margin: 0; font-size: clamp(1.25rem, 2.3vw, 1.65rem); line-height: 1.2; let
 #field { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
 #field.is-dragging { cursor: grabbing; }
 .source-panel, .probe, .scale { border: 1px solid var(--border); border-radius: 8px; background: #0a1525f0; }
-.source-panel { position: absolute; top: 14px; left: 14px; width: 252px; padding: 12px; }
+.source-panel { position: absolute; top: 14px; left: 14px; width: 330px; padding: 12px; }
 .source-panel h2 { margin: 0 0 8px; font-size: .875rem; font-weight: 650; }
 .source-panel h2 span { color: var(--muted); font: .75rem var(--mono); }
 #sources { display: grid; gap: 5px; }
 .source { display: grid; grid-template-columns: 16px 1fr; align-items: center; gap: 6px; color: var(--source-color); font: .8rem var(--mono); cursor: pointer; }
 .source input { margin: 0; accent-color: var(--source-color); }
-.source span { white-space: nowrap; }
+.source-details { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 9px; }
+.source-details span { white-space: nowrap; }
 .source-panel p { margin: 9px 0 0; color: var(--muted); font-size: .6875rem; }
 
 .scale, .probe { position: absolute; bottom: 14px; pointer-events: none; }

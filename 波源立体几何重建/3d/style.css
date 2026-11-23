@@ -81,7 +81,8 @@ h1 { margin: 0; font-size: clamp(1.25rem, 2.5vw, 1.7rem); font-weight: 660; lett
 .coordinates h2 { margin: 0 0 5px; color: var(--muted); font-size: .75rem; font-weight: 600; }
 .coordinates h2 span { font-family: var(--mono); font-weight: 400; }
 .coordinates ul { display: grid; gap: 3px; margin: 0; padding: 0; list-style: none; }
-.coordinates li { color: var(--source-color); font: .8rem var(--mono); }
+.coordinates li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 9px; color: var(--source-color); font: .8rem var(--mono); }
+.coordinates li span { white-space: nowrap; }
 
 .scene-notes { position: absolute; bottom: 16px; left: 16px; display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: .8125rem; pointer-events: none; }
 .axis-label { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; color: var(--accent); background: #0a1523d9; font: .8125rem var(--mono); }
