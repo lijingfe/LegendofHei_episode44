@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#050a14">
-  <meta name="description" content="《罗小黑战记》第 44 集球面波的三维传播、二维切面与避障寻径交互演示。">
+  <meta name="description" content="《罗小黑战记》第 44 集的五源波场重建、原片瞬移路线复原与交互回放。">
   <link rel="icon" href="data:,">
-  <title>Episode 44 · 球面波仿真</title>
+  <title>Episode 44 · 五源波场与路线复原</title>
   <style>
     :root { color-scheme: dark; background: #050a14; color: #e4f3fd; font: 16px/1.55 system-ui, sans-serif; }
     * { box-sizing: border-box; }
@@ -14,32 +14,51 @@
     main { max-width: 770px; margin: auto; }
     header { margin-bottom: 26px; }
     h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.7rem); letter-spacing: .02em; }
+    h2 { margin: 0; font-size: 1.25rem; }
+    section { margin-top: 26px; }
     p { margin: 6px 0 0; color: #a5bcd0; }
-    nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 12px; }
+    nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 12px; margin-top: 12px; }
     nav a { display: block; padding: 16px 18px; border: 1px solid #244058; border-radius: 9px; background: #071120; color: #e4f3fd; text-decoration: none; }
     nav a:hover, nav a:focus-visible { border-color: #79dff7; background: #0a192a; }
     nav strong { display: block; color: #79dff7; }
     nav span { display: block; margin-top: 3px; font-size: .9rem; color: #afc5d8; }
     footer { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 24px; font-size: .9rem; }
-    footer a { color: #a5bcd0; text-underline-offset: 3px; }
+    a { color: #a5bcd0; text-underline-offset: 3px; }
     a:focus-visible { outline: 2px solid #79dff7; outline-offset: 3px; }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <h1>Episode 44 · 球面波仿真</h1>
-      <p>《罗小黑战记》第 44 集的球面波、平面交圆与避障寻径。</p>
+      <h1>Episode 44 · 五源波场与路线复原</h1>
+      <p>从《罗小黑战记》第 44 集的画面重建探测波，再检验小黑能否按已知口令进入原点周围 50 米的接应圈。</p>
     </header>
-    <nav aria-label="交互演示">
-      <a href="./3d还原动画/"><strong>3D 动画还原</strong><span>蓝色经纬网、相贯切线与参考机位</span></a>
-      <a href="./3d/"><strong>五色 3D 球面波</strong><span>观察五个波源的传播与平面切面</span></a>
-      <a href="./2d/"><strong>2D 波场切面</strong><span>交圆时间轴、距离探针与碰撞提示</span></a>
-      <a href="./2d_pathfinding/"><strong>2D 避障寻径</strong><span>计算并回放穿过移动波线的安全路径</span></a>
-    </nav>
+    <section aria-labelledby="geometry-heading">
+      <h2 id="geometry-heading">波源立体几何重建</h2>
+      <p>已从视频帧反推五个波源的位置和发波时间，用俯视与侧视参考帧核对 3D 仿真，并生成 <var>z</var> = 0 的二维截面供寻径使用。</p>
+      <nav aria-label="波场演示">
+        <a href="./波源立体几何重建/3d还原动画/"><strong>3D 动画还原</strong><span>蓝色经纬网、相贯切线与原片参考机位</span></a>
+        <a href="./波源立体几何重建/3d/"><strong>五色 3D 球面波</strong><span>观察五个波源的传播与平面切面</span></a>
+        <a href="./波源立体几何重建/2d/"><strong>五色 2D 波场</strong><span>交圆时间轴、距离探针与碰撞提示</span></a>
+        <a href="./波源立体几何重建/波源三维高度反推原理与计算过程.md"><strong>波源反推计算</strong><span>比例尺校准、两种高度估算和逐源结果</span></a>
+      </nav>
+    </section>
+    <section aria-labelledby="route-heading">
+      <h2 id="route-heading">原片任务路径复原</h2>
+      <p>按原片已知的前九跳和末五跳约束路径，搜索剪辑省略的中段，并检查每个洞口的存续时间。最新数据包含 7,242 条贯通路线，覆盖三组固定方位角和 2,000–6,000 米的起点扫描。原片实际采用的参数和中段走法仍未唯一确定。</p>
+      <nav aria-label="路径演示与记录">
+        <a href="./原片任务路径复原/2d原片寻径/viewer.html"><strong>2D 原片寻径回放</strong><span>预计算路线，可切换方位角、洞口时间和起点</span></a>
+        <a href="./原片任务路径复原/2d_pathfinding/"><strong>通用 2D 避障寻径</strong><span>自由设置起点和裕度，实时计算并逐跳回放</span></a>
+        <a href="./原片任务路径复原/原片时间参数实测与H_fix_45_90重测报告.md"><strong>时间参数实测</strong><span>逐帧测量穿越、等待和白点留存时间</span></a>
+      </nav>
+    </section>
+    <section aria-labelledby="sources-heading">
+      <h2 id="sources-heading">sources</h2>
+      <p>本地素材目录，包含下载的 MP4、原片切片及波源测量和科普视频使用的抽帧。</p>
+    </section>
     <footer>
+      <a href="./README.md">项目说明与复现命令</a>
       <a href="https://github.com/lijingfe/LegendofHei_episode44">GitHub 源码</a>
-      <a href="https://github.com/lijingfe/LegendofHei_episode44/blob/main/波源三维高度反推原理与计算过程.md">波源高度反推原理</a>
     </footer>
   </main>
 </body>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a14">
+  <title>Episode 44 原片寻径回放</title>
+  <link rel="stylesheet" href="../2d_pathfinding/style.css">
+  <link rel="stylesheet" href="./viewer.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="heading">
+      <span class="wave-mark" aria-hidden="true"></span>
+      <div>
+        <h1>原片寻径回放</h1>
+        <p id="angle-subtitle">Episode 44 · 一号位固定 −x，二号位 ±60°，三号位 ±90°</p>
+      </div>
+    </div>
+    <div class="field-spec"><span>z = 0 m</span><span>波速 10 m/s</span><span>发射间隔 10 s</span></div>
+  </header>
+  <main class="workspace">
+    <section class="panel observatory" aria-labelledby="map-heading">
+      <header class="map-header">
+        <div><h2 id="map-heading">五源波场</h2><p>拖动平移 · 滚轮缩放</p></div>
+        <div class="map-actions">
+          <button type="button" id="focus-front">聚焦前9跳</button>
+          <button type="button" id="focus">聚焦路径</button>
+          <button type="button" id="view-reset">重置视角</button>
+        </div>
+      </header>
+      <div class="chart">
+        <canvas id="field" aria-label="五色波环、四阶段贯通路线与洞口状态"></canvas>
+        <div class="map-status" id="map-status"><i></i><span>正在加载路径</span></div>
+        <div class="scale"><span id="scale-length"></span><i id="scale-bar"></i></div>
+      </div>
+      <div class="legend" aria-label="波场与洞口图例">
+        <span><i class="key goal"></i>接应区 · r ≤ 50 m</span>
+        <span><i class="key current"></i>人物所在洞</span>
+        <span><i class="key pending"></i>新洞待抵达</span>
+        <span><i class="key fading"></i>旧洞倒计时</span>
+      </div>
+      <div class="timeline">
+        <div class="time-toolbar">
+          <button type="button" id="play" disabled><span aria-hidden="true">▶</span> 播放</button>
+          <button type="button" id="restart" disabled>回到起点</button>
+          <label class="speed-label">倍速
+            <select id="speed">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+            </select>
+          </label>
+          <output id="clock" for="time">0.00 / 0.00 s</output>
+        </div>
+        <input id="time" type="range" min="0" max="0" step="any" value="0" aria-label="回放时刻" disabled>
+        <div id="stage-nav" class="stage-nav" aria-label="阶段跳转"></div>
+      </div>
+    </section>
+    <aside class="sidebar" aria-label="路线参数与跳跃步骤">
+      <section class="panel planner" aria-labelledby="plan-heading">
+        <div class="plan-header">
+          <h2 id="plan-heading">贯通路线</h2>
+          <button type="button" id="fav-toggle" class="fav-toggle" aria-pressed="false" disabled>☆ 收藏当前</button>
+        </div>
+        <div class="angle-switch" role="group" aria-label="方位角设定">
+          <button type="button" id="angle-60-90" data-hypothesis="H_fix_60_90" aria-pressed="true">60° / 90°</button>
+          <button type="button" id="angle-45-90" data-hypothesis="H_fix_45_90" aria-pressed="false">45° / 90°</button>
+          <button type="button" id="angle-30-60" data-hypothesis="H_fix_30_60" aria-pressed="false">30° / 60°</button>
+        </div>
+        <div class="bt-switch" role="group" aria-label="遇波提前切入步数 bt">
+          <button type="button" data-bt="all" aria-pressed="true">全部 bt</button>
+          <button type="button" data-bt="0" aria-pressed="false">bt = 0</button>
+          <button type="button" data-bt="1" aria-pressed="false">bt = 1</button>
+          <button type="button" data-bt="2" aria-pressed="false">bt = 2</button>
+        </div>
+        <div class="path-fields">
+          <label for="travel">穿越耗时 <select id="travel" disabled></select></label>
+          <label for="lifetime">到达后旧洞留存 <select id="lifetime" disabled></select></label>
+          <label for="start">起点 x₀ <select id="start" disabled></select></label>
+        </div>
+        <p id="solution" class="solution" role="status">正在加载路线数据</p>
+        <dl class="metrics">
+          <div><dt>总用时（含留守）</dt><dd id="duration">—</dd></div>
+          <div><dt>跳跃次数</dt><dd id="jumps">—</dd></div>
+          <div><dt>最小安全裕度</dt><dd id="clearance">—</dd></div>
+          <div><dt>比遇波点提前</dt><dd id="backtrack">—</dd></div>
+        </dl>
+        <div class="favorites-section">
+          <div class="favorites-title">已收藏参数 <span id="fav-count">0</span></div>
+          <ul id="favorites-list" class="favorites-list" aria-label="已收藏参数列表"></ul>
+        </div>
+      </section>
+      <section class="panel jump-panel" aria-labelledby="jump-heading">
+        <header class="jump-header">
+          <h2 id="jump-heading">跳跃步骤</h2>
+          <p>点击任意一步，定格在开洞时刻</p>
+        </header>
+        <ol id="steps" aria-label="跳跃步骤"></ol>
+      </section>
+    </aside>
+  </main>
+  <script type="module" src="./viewer.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { createWaveField, SOURCES } from '../2d/wave-field.js';
+import { createWaveField, SOURCES } from '../../波源立体几何重建/2d/wave-field.js';
 import { findSafePath, validatePath } from '../pathfinding/solver.js';
 
 const waveField = createWaveField();

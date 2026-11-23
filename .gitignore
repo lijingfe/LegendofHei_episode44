@@ -2,10 +2,15 @@
 .DS_Store
 Thumbs.db
 
-# Large video, frame resources & explainer video project (excluded from public repo)
+# Local footage, frames and explainer project
 *.mp4
-calculate_source_positions_resources/
+/sources/
 explainer_video/
+
+# Local route export (over 100 MB)
+/原片任务路径复原/2d原片寻径/unified_paths.json
+/原片任务路径复原/2d原片寻径/unified_paths.json.tmp
+/原片任务路径复原/2d原片寻径/unified_paths.json.gz.tmp
 
 # Optional local dependencies
 node_modules/

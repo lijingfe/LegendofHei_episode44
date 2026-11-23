@@ -1,4 +1,4 @@
-import { createWaveField, DEFAULTS, SOURCES } from '../2d/wave-field.js';
+import { createWaveField, DEFAULTS, SOURCES } from '../../波源立体几何重建/2d/wave-field.js';
 
 const travelTime = 0.5;
 const oldLifetime = 1;
@@ -42,12 +42,15 @@ function measure(x, y, tStart, tEnd, waves, holeRadius, safetyMargin, endInclusi
   return { safe: blockedUntil === -Infinity, margin, blockedUntil };
 }
 
-export function isHoleSafeDuring(x, y, tStart, tEnd, waveField, holeRadius = 1, safetyMargin = 0) {
+export function isHoleSafeDuring(x, y, tStart, tEnd, waveField, holeRadius = 1, safetyMargin = 0, {
+  endInclusive = true,
+} = {}) {
   if (![x, y, tStart, tEnd, holeRadius, safetyMargin].every(Number.isFinite)
       || tStart > tEnd || holeRadius < 0 || safetyMargin < 0) {
     throw new RangeError('需要有限坐标、有效时间区间与非负半径和裕度');
   }
-  const { safe, margin } = measure(x, y, tStart, tEnd, waveField.getEmissionsBetween(tStart, tEnd), holeRadius, safetyMargin);
+  const { safe, margin } = measure(x, y, tStart, tEnd, waveField.getEmissionsBetween(tStart, tEnd),
+    holeRadius, safetyMargin, endInclusive);
   return { safe, margin };
 }
 
@@ -285,21 +288,26 @@ export function findSafePath({
 
 export function validatePath(steps, waveField = field, {
   xStart = steps?.[0]?.x, goalRadius = 50, maxStep = 50, holeRadius = 1, safetyMargin = 0, maxTime = Infinity,
+  start = null, holdTime = goalHold, allowEqualMargin = false,
 } = {}) {
   const fail = (reason, index = null, time = null) => ({ valid: false, reason, index, time });
   if (!Array.isArray(steps) || !steps.length || steps.some(step => !step || typeof step !== 'object')) {
     return fail('路径为空或洞记录无效');
   }
-  if (![xStart, goalRadius, maxStep, holeRadius, safetyMargin].every(Number.isFinite)
-      || !(maxTime > 0) || goalRadius < 0 || maxStep <= 0 || holeRadius <= 0 || safetyMargin < 0) {
+  const initial = start ?? { x: xStart, y: 0, tOpen: 0, tArrive: 0 };
+  if (![initial.x, initial.y, initial.tOpen, initial.tArrive, goalRadius, maxStep, holeRadius,
+    safetyMargin, holdTime].every(Number.isFinite)
+      || initial.tOpen < 0 || initial.tArrive < initial.tOpen || !(maxTime > 0) || goalRadius < 0
+      || maxStep <= 0 || holeRadius <= 0 || safetyMargin < 0 || holdTime < 0) {
     return fail('校验参数无效');
   }
   const first = steps[0];
   const last = steps.at(-1);
-  if (first.x !== xStart || !(xStart > 50) || first.y !== 0 || first.tOpen !== 0 || first.tArrive !== 0) {
+  if ((start === null && !(xStart > 50)) || first.x !== initial.x || first.y !== initial.y
+      || first.tOpen !== initial.tOpen || first.tArrive !== initial.tArrive) {
     return fail('初始洞位置或时刻错误', 0);
   }
-  const end = last.tArrive + goalHold;
+  const end = last.tArrive + holdTime;
   if (!Number.isFinite(end) || end > maxTime || Math.hypot(last.x, last.y) > goalRadius) {
     return fail('终点或留守时限错误', steps.length - 1);
   }
@@ -316,6 +324,7 @@ export function validatePath(steps, waveField = field, {
   }
 
   const tolerance = holeRadius + safetyMargin;
+  const allowBoundary = allowEqualMargin && safetyMargin > 0;
   const events = [...new Set(steps.flatMap(({ tOpen, tArrive, tExpire }) => (
     tExpire === null ? [tOpen, tArrive, end] : [tOpen, tArrive, tExpire]
   )))].sort((a, b) => a - b);
@@ -329,7 +338,8 @@ export function validatePath(steps, waveField = field, {
     samples++;
     for (const hole of active) {
       for (const wave of circles) {
-        if (Math.abs(Math.hypot(hole.x - wave.cx, hole.y - wave.cy) - wave.r) <= tolerance) {
+        const gap = Math.abs(Math.hypot(hole.x - wave.cx, hole.y - wave.cy) - wave.r);
+        if (gap < tolerance || (!allowBoundary && gap === tolerance)) {
           return fail('采样复核检测到波环触洞', hole.index, time);
         }
       }
@@ -337,21 +347,25 @@ export function validatePath(steps, waveField = field, {
   }
 
   let tick = 0;
+  const sampleTime = () => initial.tOpen + tick * 0.02;
   for (const event of events) {
-    while (tick * 0.02 < event) {
-      const hit = sample(tick++ * 0.02);
+    while (sampleTime() < event) {
+      const hit = sample(sampleTime());
       if (hit) return hit;
+      tick++;
     }
     const hit = sample(event);
     if (hit) return hit;
-    if (tick * 0.02 === event) tick++;
+    if (sampleTime() === event) tick++;
   }
   // Check between samples as well, including short-lived or tangent contacts.
   for (const hole of steps) {
     const close = hole.tExpire ?? end;
     const check = measure(hole.x, hole.y, hole.tOpen, close, waveField.getEmissionsBetween(hole.tOpen, close),
       holeRadius, safetyMargin, hole.tExpire === null);
-    if (!check.safe) return fail('连续区间复核检测到波环触洞', hole.index);
+    if (allowBoundary ? check.margin < safetyMargin : !check.safe) {
+      return fail('连续区间复核检测到波环触洞', hole.index);
+    }
   }
   return { valid: true, samples };
 }

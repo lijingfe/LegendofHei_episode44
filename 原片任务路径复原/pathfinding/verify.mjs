@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createWaveField } from '../2d/wave-field.js';
+import { createWaveField } from '../../波源立体几何重建/2d/wave-field.js';
 import { findSafePath, isHoleSafeDuring, validatePath } from './solver.js';
 
 const field = createWaveField();
