@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CONFIG, latestEmission, waveCapacity, waveRadius, waveOpacity, sectionRadius } from './wave-model.js';
 import { createTimeline } from './timeline.js';
-import { BASE_FOV, mountLens } from './lens.js';
+import { BASE_FOV } from './lens.js';
 
 const { colors, sources, maxRadius, sectionCenter, sectionExtent } = CONFIG;
 const sceneCanvas = document.querySelector('#scene');
@@ -13,15 +13,17 @@ const renderer = new THREE.WebGLRenderer({ canvas: sceneCanvas, antialias: false
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(colors.background);
 const sourcePositions = sources.map(({ x, y, z }) => new THREE.Vector3(x, y, z));
-const sceneCenter = new THREE.Vector3(sectionCenter.x, sectionCenter.y, 20);
-const sceneRadius = maxRadius + Math.max(...sourcePositions.map(position => position.distanceTo(sceneCenter)));
+const startTime = 15;
+const sceneRadius = maxRadius + Math.max(...sourcePositions.map(position => position.length()));
+const initialRadius = Math.max(...sources.map((source, index) => (
+  sourcePositions[index].length() + (waveRadius(startTime, 0, source) ?? 0)
+)));
 const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 1, sceneRadius * 14);
 camera.up.set(0, 0, 1);
-const orbitDirection = new THREE.Vector3(0.93, -1.27, 0.81).normalize();
-camera.position.copy(sceneCenter).addScaledVector(orbitDirection, sceneRadius * 3);
+// Preserve +X to the right at OrbitControls' polar limit.
+camera.position.set(0, -0.003, sceneRadius * 3);
 
 const controls = new OrbitControls(camera, sceneCanvas);
-controls.target.copy(sceneCenter);
 controls.minDistance = 12;
 controls.maxDistance = sceneRadius * 9;
 controls.enableDamping = true;
@@ -77,7 +79,7 @@ const grid = new THREE.Mesh(
     `,
   }),
 );
-grid.position.set(sceneCenter.x, sceneCenter.y, 0);
+grid.position.set(sectionCenter.x, sectionCenter.y, 0);
 grid.renderOrder = 0;
 scene.add(grid);
 
@@ -225,8 +227,8 @@ function resizeScene({ width, height }) {
     const frameWidth = (width - 2 * offsetX) / height;
     const frameHeight = (height - 2 * offsetY) / height;
     const frameHalfFov = Math.atan(Math.tan(verticalHalfFov) * Math.min(frameWidth, frameHeight));
-    const fitDistance = sceneRadius * 1.04 / Math.sin(frameHalfFov);
-    camera.position.copy(sceneCenter).addScaledVector(orbitDirection, fitDistance);
+    const fitDistance = initialRadius * 1.04 / Math.sin(frameHalfFov);
+    camera.position.set(0, -0.003, fitDistance);
     controls.update();
   }
   // Bound transparent fragment work on high-DPI and large monitors.
@@ -371,7 +373,6 @@ function render(now) {
 }
 
 controls.addEventListener('change', () => { sceneDirty = true; });
-mountLens(document.querySelector('#lens'), camera, () => { sceneDirty = true; });
 
 document.querySelector('#wave-speed').textContent = CONFIG.speed;
 const periods = [...new Set(sources.map(({ emissionPeriod }) => emissionPeriod))];
@@ -380,11 +381,16 @@ document.querySelector('#max-radius').textContent = maxRadius;
 document.querySelector('#section-span').textContent = sectionExtent * 2;
 document.querySelector('#scale-label').textContent = `${CONFIG.scaleLength} m`;
 const legend = document.querySelector('#section-legend');
-for (const { label, colors } of sources) {
+const coordinates = document.querySelector('#source-coordinates');
+for (const { label, colors, x, y, z } of sources) {
   const item = document.createElement('li');
   item.style.setProperty('--source-color', colors.section);
   item.textContent = label;
   legend.append(item);
+
+  const coordinate = item.cloneNode();
+  coordinate.textContent = `${label} (${x}, ${y}, ${z})`;
+  coordinates.append(coordinate);
 }
 
 function resize() {
@@ -397,5 +403,5 @@ observer.observe(sceneCanvas);
 observer.observe(sectionCanvas);
 window.addEventListener('resize', resize);
 resize();
-const timeline = createTimeline(document.querySelector('#timeline'));
+const timeline = createTimeline(document.querySelector('#timeline'), { autoplay: false, startTime });
 render(performance.now());

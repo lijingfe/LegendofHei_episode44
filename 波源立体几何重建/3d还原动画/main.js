@@ -17,12 +17,12 @@ const planeGuides = new THREE.Group();
 planeGuides.visible = showPlane.checked;
 scene.add(planeGuides);
 const sourcePositions = sources.map(({ x, y, z }) => new THREE.Vector3(x, y, z));
-const sceneCenter = new THREE.Vector3(sectionCenter.x, sectionCenter.y, 20);
+const sceneCenter = new THREE.Vector3(150, 0, 0);
 const sceneRadius = maxRadius + Math.max(...sourcePositions.map(position => position.distanceTo(sceneCenter)));
+const initialCameraDistance = 950;
 const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 1, sceneRadius * 14);
 camera.up.set(0, 0, 1);
-const orbitDirection = new THREE.Vector3(0.93, -1.27, 0.81).normalize();
-camera.position.copy(sceneCenter).addScaledVector(orbitDirection, sceneRadius * 3);
+camera.position.set(sceneCenter.x + initialCameraDistance, sceneCenter.y, sceneCenter.z);
 
 const controls = new OrbitControls(camera, sceneCanvas);
 controls.target.copy(sceneCenter);
@@ -313,13 +313,8 @@ function resizeScene({ width, height }) {
   const aspect = width / height;
   const offsetX = aspect > 1.1 ? width * 0.035 : 0;
   const offsetY = aspect < 0.85 ? height * 0.075 : 0;
-  if (camera.view === null) {
-    const verticalHalfFov = THREE.MathUtils.degToRad(camera.fov / 2);
-    const frameWidth = (width - 2 * offsetX) / height;
-    const frameHeight = (height - 2 * offsetY) / height;
-    const frameHalfFov = Math.atan(Math.tan(verticalHalfFov) * Math.min(frameWidth, frameHeight));
-    const fitDistance = sceneRadius * 1.04 / Math.sin(frameHalfFov);
-    camera.position.copy(sceneCenter).addScaledVector(orbitDirection, fitDistance);
+  if (camera.view === null && aspect < 1) {
+    camera.position.x = sceneCenter.x + initialCameraDistance / aspect;
     controls.update();
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -540,5 +535,5 @@ observer.observe(sceneCanvas);
 observer.observe(sectionCanvas);
 window.addEventListener('resize', resize);
 resize();
-const timeline = createTimeline(document.querySelector('#timeline'));
+const timeline = createTimeline(document.querySelector('#timeline'), { autoplay: false, startTime: 30 });
 render(performance.now());

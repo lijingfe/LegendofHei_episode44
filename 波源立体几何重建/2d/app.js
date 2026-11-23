@@ -13,6 +13,10 @@ function coordinates({ x, y }) {
   return `${x.toFixed(1)}, ${y.toFixed(1)}`.replaceAll('-', '−');
 }
 
+function sourceCoordinates({ x, y, z }) {
+  return `(${x}, ${y}, ${z})`;
+}
+
 export function mountWaveView({ field, sectionCenter, sources }) {
   const canvas = document.querySelector('#field');
   const ctx = canvas.getContext('2d', { alpha: false });
@@ -29,6 +33,7 @@ export function mountWaveView({ field, sectionCenter, sources }) {
   let palette = PALETTES.teaching;
   let width = 0;
   let height = 0;
+  let leftInset = 0;
   let centerX = 0;
   let camera;
   let pointer = null;
@@ -40,9 +45,8 @@ export function mountWaveView({ field, sectionCenter, sources }) {
     const row = document.createElement('label');
     row.className = 'source';
     row.style.setProperty('--source-color', source.colors.section);
-    row.innerHTML = '<input type="checkbox" checked><span><b></b><small></small></span>';
-    row.querySelector('b').textContent = source.name;
-    row.querySelector('small').textContent = `(${coordinates(source)}) · z\u00a0${source.z}`;
+    row.innerHTML = '<input type="checkbox" checked><span></span>';
+    row.querySelector('span').textContent = `${source.label} ${sourceCoordinates(source)}`;
     row.querySelector('input').addEventListener('change', ({ target }) => {
       if (target.checked) visible.add(source.id);
       else visible.delete(source.id);
@@ -52,8 +56,7 @@ export function mountWaveView({ field, sectionCenter, sources }) {
   }
 
   function resetView() {
-    const usableWidth = width > 800 ? width - 216 : width;
-    camera = { ...sectionCenter, scale: Math.min(usableWidth / 1040, height / 830) };
+    camera = { ...sectionCenter, scale: Math.min((width - leftInset) / 1040, height / 830) };
     dirty = true;
   }
 
@@ -62,7 +65,9 @@ export function mountWaveView({ field, sectionCenter, sources }) {
     if (!bounds.width || !bounds.height) return;
     width = bounds.width;
     height = bounds.height;
-    centerX = (width - (width > 800 ? 216 : 0)) / 2;
+    const panel = sourcePanel.parentElement;
+    leftInset = getComputedStyle(panel).position === 'absolute' ? panel.offsetWidth + 2 * panel.offsetLeft : 0;
+    centerX = (width + leftInset) / 2;
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
@@ -147,7 +152,7 @@ export function mountWaveView({ field, sectionCenter, sources }) {
       const x = screenX(source.x);
       const y = screenY(source.y);
       const preferLeftOfPoint = width < 500 && source.y < sectionCenter.y && x >= 135;
-      const alignLeft = !preferLeftOfPoint && x < width - (width > 800 ? 340 : 125);
+      const alignLeft = !preferLeftOfPoint && x < width - 125;
       const labelX = x + (alignLeft ? 9 : -9);
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, 2 * Math.PI);
@@ -157,11 +162,10 @@ export function mountWaveView({ field, sectionCenter, sources }) {
       ctx.font = '600 12px system-ui';
       ctx.strokeStyle = palette.outline;
       ctx.lineWidth = 3;
-      ctx.strokeText(`源${source.id}`, labelX, y - 5);
-      ctx.fillText(`源${source.id}`, labelX, y - 5);
-      ctx.fillStyle = palette.text;
+      ctx.strokeText(source.label, labelX, y - 5);
+      ctx.fillText(source.label, labelX, y - 5);
       ctx.font = `${width < 500 ? 9 : 10}px monospace`;
-      const detail = `(${coordinates(source)}) z=${source.z}`;
+      const detail = sourceCoordinates(source);
       ctx.strokeText(detail, labelX, y + 9);
       ctx.fillText(detail, labelX, y + 9);
     }

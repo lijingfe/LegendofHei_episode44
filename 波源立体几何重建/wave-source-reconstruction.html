@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050a14">
+  <meta name="description" content="从《罗小黑战记》第 44 集的二维画面反推五个球面波源的位置、高度与发波时刻。">
+  <title>波源反推计算 · Episode 44</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root { color-scheme: dark; background: #050a14; color: #e4f3fd; font: 16px/1.75 system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: clamp(24px, 5vw, 64px) 20px; }
+    main { max-width: 920px; margin: auto; }
+    a { color: #79dff7; text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid #79dff7; outline-offset: 3px; }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.7rem); line-height: 1.25; margin: 24px 0 18px; }
+    h2 { font-size: clamp(1.3rem, 3.5vw, 1.65rem); line-height: 1.4; }
+    h3 { font-size: 1.12rem; margin-top: 24px; }
+    p, li { color: #b9cee0; overflow-wrap: anywhere; }
+    li + li { margin-top: .4rem; }
+    li > ul { margin-top: .3rem; }
+    strong { color: #e4f3fd; }
+    hr { margin: 32px 0; border: 0; border-top: 1px solid #244058; }
+    code { color: #c8e9fb; background: #101f31; padding: .12em .3em; border-radius: 4px; }
+    blockquote { margin: 20px 0; padding: 10px 16px; border-left: 3px solid #429fb9; background: #0a1626; }
+    blockquote p { margin: 0; }
+    .katex { color: #e4f3fd; }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.45em 0; }
+    .table-scroll { overflow-x: auto; border: 1px solid #244058; border-radius: 9px; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { padding: 9px 11px; white-space: nowrap; border-bottom: 1px solid #244058; }
+    th { background: #0c1d30; text-align: left; }
+    tbody tr:nth-child(even) { background: #081321; }
+    tbody tr:last-child td { border-bottom: 0; }
+    td code { background: none; padding: 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="../index.html">← 返回项目首页</a>
+    <!-- 正文来自同目录的《波源三维高度反推原理与计算过程.md》。 -->
+    <article>
+      <h1>球面波波源三维高度（$z$）与时空坐标反推原理及计算过程</h1>
+      <p>本文记录如何仅通过《Episode 44》视频中的 <strong>2D 平面视图（$z = 0$ 截面）</strong>，结合 4K 帧像素测量与两种独立数学方法，精确反推出 5 个球面波源的三维空间坐标 $(x, y, |z|)$ 与三维首次发波时刻 $t_0$。</p>
+      <hr>
+      <h2>一、几何与物理模型</h2>
+      <p>设第 $i$ 个波源位于三维空间 $(x_i, y_i, z_i)$，波速为 $v = 10\,\mathrm{m/s}$，发波周期为 $\Delta T = 10\,\mathrm{s}$。若某道波峰在时刻 $t_0$ 发出，则在时刻 $t \ge t_0$ 时：</p>
+      <ol>
+      <li><strong>三维球面半径</strong>：
+      $$R(t) = v(t - t_0)$$</li>
+      <li><strong>与 $z = 0$ 平面的交圆（即平面视图中看到的圆）</strong>：
+      <ul>
+      <li>交圆的圆心<strong>严格等于波源的水平投影 $(x_i, y_i)$</strong>，不受高度 $z_i$ 的影响。</li>
+      <li>当 $R(t) \ge |z_i|$ 时，波面触达 $z = 0$ 平面，交圆半径为：
+      $$r(t) = \sqrt{R(t)^2 - z_i^2} = \sqrt{v^2(t - t_0)^2 - z_i^2}$$</li>
+      </ul>
+      </li>
+      <li><strong>平面表观扩张速度（核心现象）</strong>：
+      对 $r(t)$ 关于时间 $t$ 求导，得到交圆在 $z = 0$ 平面上的表观扩张速度：
+      $$v_{\text{平面}}(t) = \frac{dr}{dt} = v \cdot \frac{R(t)}{r(t)} = \frac{v}{\sqrt{1 - (z_i / R(t))^2}} &gt; v$$
+      <ul>
+      <li>刚切入 $z = 0$ 平面时（$r \to 0^+$），切圆表观扩张速度<strong>远超 $10\,\mathrm{m/s}$</strong>（理论上趋于无穷大）。</li>
+      <li>随着 $r$ 增大，表观速度<strong>非线性减速</strong>并逐渐趋近真实波速 $10\,\mathrm{m/s}$。</li>
+      <li><strong>正因如此，交圆的减速曲线与同心圆间距中完整编码了高度 $|z_i|$ 的信息。</strong></li>
+      </ul>
+      </li>
+      </ol>
+      <hr>
+      <h2>二、前置校准：原点（3 号波源）的标尺校核与 $z = 0$ 验证</h2>
+      <p>在求解其余波源前，必须先验证两件事：① 原点是否严格位于 $z = 0$；② 画面自带的 <code>250m</code> 比例尺是否准确。</p>
+      <p>从 4K 视频流（<code>3840 × 2160</code>，<code>24 fps</code>）中提取了两段平面视图，截图保存在本地 <code>sources/calculate_source_positions_resources/</code>：</p>
+      <ul>
+      <li><strong>稳定段</strong>：<code>f127</code> – <code>f234</code>（108 帧，对应 <code>5.25s – 9.71s</code>）</li>
+      <li><strong>三环缩放段</strong>：<code>f319</code> – <code>f325</code>（7 帧，对应 <code>13.25s – 13.50s</code>）</li>
+      </ul>
+      <h3>1. 两种独立检验确认原点 $z = 0$</h3>
+      <ul>
+      <li><strong>检验一（多帧直线度检验，<code>f127..f234</code>）</strong>：
+      <ul>
+      <li>测得原点外环 <code>W1</code> 线性拟合斜率 $10.319\,\mathrm{m/s}$（$\mathrm{RMSE} = 0.035\,\mathrm{m}$），内环 <code>W2</code> 线性拟合斜率 $10.177\,\mathrm{m/s}$（$\mathrm{RMSE} = 0.018\,\mathrm{m}$）。</li>
+      <li>两条曲线均无任何减速曲率，且内环<strong>并没有</strong>快于外环，排除 $z \neq 0$ 的可能。</li>
+      </ul>
+      </li>
+      <li><strong>检验二（<code>f319</code> 单帧三环等距检验）</strong>：
+      <ul>
+      <li>测得原点三道同心圆半径分别为 <code>99.57 m</code>、<code>199.69 m</code>、<code>299.74 m</code>（比例几乎严格为 <code>1 : 2 : 3</code>）。</li>
+      <li>相邻环间距：$\Delta r_{1\to 2} = 100.12\,\mathrm{m}$，$\Delta r_{2\to 3} = 100.06\,\mathrm{m}$，两者仅差 <strong><code>0.06 m</code></strong>，从几何上独立证实 <strong>原点严格满足 $z = 0$</strong>。</li>
+      </ul>
+      </li>
+      </ul>
+      <h3>2. 暴露并消除 <code>250m</code> 标尺的 2.4% 系统偏差</h3>
+      <ul>
+      <li>按画面右下角 <code>250m</code> 标尺（<code>624.58 px</code>）换算为 <code>2.4983 px/m</code>，导致原点两道波的间距被折算成 <code>102.4 m</code>（偏大 2.4%）。若不校准而直接套用 $v = 10\,\mathrm{m/s}$ 反推高度，会把这 2.4% 的标尺偏差误判成“超速”，给原点算出虚假高度。</li>
+      <li><strong>校准方案</strong>：以已确认 $z = 0$ 的原点波自身作为绝对物理标尺（相邻两道波理论间距严格等于 $10\,\mathrm{s} \times 10\,\mathrm{m/s} = 100\,\mathrm{m}$）：
+      <ul>
+      <li>在稳定段 <code>f127..f234</code>，校准尺度为 <strong><code>2.5596 px/m</code></strong>（<code>100 m = 255.96 px</code>）。</li>
+      <li>在镜头缩放段 <code>f319..f323</code>，每帧各自用当帧原点的双段间距均值实时自校准。</li>
+      <li>同时，用原点最前列波半径除以 $10\,\mathrm{m/s}$ 作为精确的模拟时钟 $t_{\text{sim}}$（不受视频剪辑变速影响，以原点最前列波的发射时刻为 $t = 0$）。</li>
+      </ul>
+      </li>
+      </ul>
+      <hr>
+      <h2>三、求解 $|z_i|$ 与 $t_0$ 的两种独立数学方法</h2>
+      <h3>方法 1：多帧双曲线最小二乘拟合（<code>f127..f234</code>）</h3>
+      <p>将 $r(t)^2 = v^2(t - t_0)^2 - z_i^2$ 展开并移项，整理为关于时间 $t$ 的线性回归形式：
+      $$r(t)^2 - v^2 t^2 = \underbrace{(-2 v^2 t_0)}_{A} t + \underbrace{(v^2 t_0^2 - z_i^2)}_{B}$$</p>
+      <p>对多帧实测点 $(t_k, r_k)$ 做最小二乘直线拟合求得斜率 $A$ 与截距 $B$，即可直接解析解出：
+      $$t_0 = -\frac{A}{2 v^2}, \qquad |z_i| = \sqrt{v^2 t_0^2 - B}$$</p>
+      <p>以 <strong>2 号波源（中上）</strong> 为例，实测其表观扩张速度从 <code>f127 → f139</code> 的 <strong><code>21.15 m/s</code></strong> 一路平滑减速至 <code>f223 → f234</code> 的 <strong><code>13.14 m/s</code></strong>；匀速直线拟合残差高达 $\mathrm{RMSE} = 1.620\,\mathrm{m}$，而三维双曲线拟合残差降至 <strong>$\mathrm{RMSE} = 0.159\,\mathrm{m}$</strong>（精度提升 10 倍），解得：
+      $$|z_2| = 83.84\,\mathrm{m}, \qquad t_0 = 5.97\,\mathrm{s}$$</p>
+      <h3>方法 2：单帧同源双圈间距法（<code>f319..f323</code>）</h3>
+      <p>在 <code>f319..f323</code> 中，全部 5 个波源均同时出现了至少两道同心圆（内圈半径 $r_{\text{内}}$、外圈半径 $r_{\text{外}}$）。由于同源相邻两道波的三维半径差恒为 $R_{\text{外}} - R_{\text{内}} = 100\,\mathrm{m}$，利用平方差恒等式：
+      $$r_{\text{外}}^2 - r_{\text{内}}^2 = (R_{\text{外}}^2 - z_i^2) - (R_{\text{内}}^2 - z_i^2) = R_{\text{外}}^2 - R_{\text{内}}^2 = 100\,(R_{\text{外}} + R_{\text{内}})$$</p>
+      <p>从而无需多帧对齐，单帧即可直接算出外圈的三维真实半径 $R_{\text{外}}$ 与高度 $|z_i|$：
+      $$R_{\text{外}} + R_{\text{内}} = \frac{r_{\text{外}}^2 - r_{\text{内}}^2}{100}, \qquad R_{\text{外}} = \frac{(R_{\text{外}} + R_{\text{内}}) + 100}{2}, \qquad |z_i| = \sqrt{R_{\text{外}}^2 - r_{\text{外}}^2}$$</p>
+      <p>再结合当帧原点的模拟时刻 $t_{\text{sim}}$，即可得首次发波时刻 $t_0 = t_{\text{sim}} - R_{\text{外}} / 10$（若该源共有两道可见波，则外圈即为第 0 道波）。</p>
+      <p>以 <strong>2 号波源</strong> 在 <code>f319</code> 为例：测得 $r_{\text{内}} = 123.30\,\mathrm{m}$、$r_{\text{外}} = 233.15\,\mathrm{m}$，间距 $\Delta r = 109.85\,\mathrm{m} &gt; 100\,\mathrm{m}$，5 帧均值解得：
+      $$|z_2| = 78.42\,\mathrm{m}, \qquad t_0 = 5.33\,\mathrm{s}$$</p>
+      <hr>
+      <h2>四、5 个波源双方法交叉验证汇总表</h2>
+      <p>从上到下将 5 个波源依次编号为 <strong>1 ~ 5</strong>（其中 <strong>3 号为原点</strong>，水平方向向右为 $+x$，向上为 $+y$）：</p>
+      <div class="table-scroll" role="region" aria-label="五个波源的比较结果" tabindex="0">
+      <table>
+      <thead>
+      <tr>
+      <th style="text-align:left">编号（位置）</th>
+      <th style="text-align:center">$x$ (m)</th>
+      <th style="text-align:center">$y$ (m)</th>
+      <th style="text-align:center">方法 1：$|z|$ / $t_0$</th>
+      <th style="text-align:center">方法 2：$|z|$ / $t_0$</th>
+      <th style="text-align:center">采纳值 $|z|$ (m)</th>
+      <th style="text-align:center">采纳值 $t_0$ (s)</th>
+      <th style="text-align:center">触达 $z=0$ 时刻 (s)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align:left"><strong>1 号（右上）</strong></td>
+      <td style="text-align:center"><code>488.5</code></td>
+      <td style="text-align:center"><code>+318.0</code></td>
+      <td style="text-align:center"><code>39.76 m</code> / <code>11.86 s</code></td>
+      <td style="text-align:center"><code>38.30 m</code> / <code>11.66 s</code></td>
+      <td style="text-align:center"><strong><code>39.0</code></strong></td>
+      <td style="text-align:center"><strong><code>11.76</code></strong></td>
+      <td style="text-align:center"><code>15.66</code></td>
+      </tr>
+      <tr>
+      <td style="text-align:left"><strong>2 号（中上）</strong></td>
+      <td style="text-align:center"><code>200.9</code></td>
+      <td style="text-align:center"><code>+226.3</code></td>
+      <td style="text-align:center"><code>83.84 m</code> / <code>5.97 s</code></td>
+      <td style="text-align:center"><code>78.42 m</code> / <code>5.33 s</code></td>
+      <td style="text-align:center"><strong><code>81.1</code></strong></td>
+      <td style="text-align:center"><strong><code>5.65</code></strong></td>
+      <td style="text-align:center"><code>13.76</code></td>
+      </tr>
+      <tr>
+      <td style="text-align:left"><strong>3 号（原点）</strong></td>
+      <td style="text-align:center"><code>0.0</code></td>
+      <td style="text-align:center"><code>0.0</code></td>
+      <td style="text-align:center"><code>0.00 m</code> / <code>0.00 s</code></td>
+      <td style="text-align:center"><code>0.00 m</code> / <code>0.00 s</code></td>
+      <td style="text-align:center"><strong><code>0.0</code></strong></td>
+      <td style="text-align:center"><strong><code>0.00</code></strong></td>
+      <td style="text-align:center"><code>0.00</code></td>
+      </tr>
+      <tr>
+      <td style="text-align:left"><strong>4 号（中下）</strong></td>
+      <td style="text-align:center"><code>169.0</code></td>
+      <td style="text-align:center"><code>-251.1</code></td>
+      <td style="text-align:center"><code>85.50 m</code> / <code>5.82 s</code></td>
+      <td style="text-align:center"><code>82.73 m</code> / <code>5.83 s</code></td>
+      <td style="text-align:center"><strong><code>84.1</code></strong></td>
+      <td style="text-align:center"><strong><code>5.83</code></strong></td>
+      <td style="text-align:center"><code>14.24</code></td>
+      </tr>
+      <tr>
+      <td style="text-align:left"><strong>5 号（右下）</strong></td>
+      <td style="text-align:center"><code>470.6</code></td>
+      <td style="text-align:center"><code>-287.5</code></td>
+      <td style="text-align:center"><code>13.44 m</code> / <code>15.45 s</code></td>
+      <td style="text-align:center"><code>13.21 m</code> / <code>15.33 s</code></td>
+      <td style="text-align:center"><strong><code>13.3</code></strong></td>
+      <td style="text-align:center"><strong><code>15.39</code></strong></td>
+      <td style="text-align:center"><code>16.72</code></td>
+      </tr>
+      </tbody>
+      </table>
+      </div>
+      <blockquote>
+      <p><strong>关于 $z$ 坐标的正负号</strong>：2D 平面截面只能唯一确定 $|z|$ 的大小，无法区分波源位于 $z = 0$ 平面上方（$+z$）还是下方（$-z$）。结合视频中的 3D 透视镜头定性判断相对高低方向后，当前仿真代码采用 <code>z = [+39.0, -81.1, 0.0, +84.1, -13.3]</code>（也可根据具体视角需要调整符号，不影响 $z = 0$ 平面上的任何波形与避障结果）。</p>
+      </blockquote>
+    </article>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.renderMathInElement?.(document.querySelector('article'), {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+        ],
+        throwOnError: false,
+      });
+    });
+  </script>
+</body>
+</html>

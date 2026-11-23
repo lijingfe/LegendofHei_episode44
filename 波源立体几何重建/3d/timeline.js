@@ -1,7 +1,7 @@
 const END = 60;
 const STEP = 0.05;
 
-export function createTimeline(container, { autoplay = true } = {}) {
+export function createTimeline(container, { autoplay = true, startTime = 0 } = {}) {
   container.classList.add('timeline');
   container.innerHTML = `
     <div class="timeline-controls" role="group" aria-label="模拟时间控制">
@@ -27,7 +27,7 @@ export function createTimeline(container, { autoplay = true } = {}) {
   const slider = container.querySelector('#timeline-slider');
   let playing = autoplay;
   let rate = 1;
-  let anchorTime = 0;
+  let anchorTime = startTime;
   let anchorReal = performance.now();
 
   function setPlaying(next) {
