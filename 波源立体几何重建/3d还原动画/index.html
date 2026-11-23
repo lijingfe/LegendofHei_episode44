@@ -63,7 +63,7 @@
   </main>
 
   <script type="module">
-    import('./main.js').catch((error) => {
+    import('./main.js?v=f81fbff').catch((error) => {
       console.error(error);
       const message = document.querySelector('#load-error');
       message.textContent = '无法加载模拟。请确认可以访问 Three.js CDN，且浏览器支持 WebGL 2。';

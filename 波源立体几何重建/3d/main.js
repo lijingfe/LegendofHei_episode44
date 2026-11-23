@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CONFIG, latestEmission, waveCapacity, waveRadius, waveOpacity, sectionRadius } from './wave-model.js';
-import { createTimeline } from './timeline.js';
+import { createTimeline } from './timeline.js?v=f81fbff';
 import { BASE_FOV } from './lens.js';
 
 const { colors, sources, maxRadius, sectionCenter, sectionExtent } = CONFIG;

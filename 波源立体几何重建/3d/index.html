@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050a14">
   <title>球面波传播</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=f81fbff">
   <link rel="stylesheet" href="./timeline.css">
   <script type="importmap">
     {
@@ -61,7 +61,7 @@
   </main>
 
   <script type="module">
-    import('./main.js').catch((error) => {
+    import('./main.js?v=f81fbff').catch((error) => {
       console.error(error);
       const message = document.querySelector('#load-error');
       message.textContent = '无法加载模拟。请确认可以访问 Three.js CDN，且浏览器支持 WebGL 2。';

@@ -1,5 +1,5 @@
-import { createTimeline } from '../3d/timeline.js';
-import { mountWaveView } from './app.js';
+import { createTimeline } from '../3d/timeline.js?v=f81fbff';
+import { mountWaveView } from './app.js?v=f81fbff';
 import { field, sectionCenter, sources } from './wave-model.js';
 
 document.querySelector('#wave-speed').textContent = `${sources[0].speed} m/s`;
